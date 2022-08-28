@@ -4,7 +4,16 @@ from sklearn import tree
 import pandas as pd
 import numpy as np
 
+def iv_for_var(data):
+    
+    data['share'] = data['all_cnt'] / data['all_cnt'].sum()
+    data['distribution_of_good'] = data['target_cnt'] / data['target_cnt'].sum()
+    data['distribution_of_bad'] = (data['all_cnt'] - data['target_cnt']) / (data['all_cnt'].sum() - data['target_cnt'].sum())
+    data['woe'] = np.log(data['distribution_of_good'] / data['distribution_of_bad'])
 
+    data['iv'] = data['woe'] * (data['distribution_of_good'] - data['distribution_of_bad'])
+    
+    return data['iv'].sum()
 
 def WOE(gap_bads, bads, gap_goods, goods):
     bads_share = (len(gap_bads) + 0.5) / (len(bads) + 0.5) * 1.0
